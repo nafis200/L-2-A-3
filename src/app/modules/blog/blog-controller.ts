@@ -31,7 +31,7 @@ const upateBlogPost = catchAsync(async (req, res) => {
 
 const deleteBlogPost = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await BlogServices.DeleteBlog(id, req.user.req.user.useremail);
+  const result = await BlogServices.DeleteBlog(id,req.user.useremail);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

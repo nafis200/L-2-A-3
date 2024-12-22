@@ -44,10 +44,13 @@ const DeleteBlog = async (id: string, currentUserEmail: string) => {
   if (!existingBlog) {
     throw new AppError(404, "Blog not found");
   }
-
   const authorId = existingBlog.author.toString();
 
-  if (authorId === currentUserEmail) {
+  const IDs = await User.findById(authorId);
+
+  const CurrentEmail = IDs?.email;
+
+  if (CurrentEmail === currentUserEmail) {
     const result = await BlogPostModel.findByIdAndDelete(id);
     return result;
   } else {
