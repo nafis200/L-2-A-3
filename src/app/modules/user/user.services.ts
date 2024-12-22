@@ -22,10 +22,7 @@ const RegisterUser = async (payload: TUser) => {
 };
 
 const loginUser = async (payload: TLoginUser) => {
-  const user = await User.isUserExistsByCustomId(payload.email);
-
- 
-  
+  const user = await User.isUserExistsByCustomId(payload.email);  
 
   const isBlocked = user?.isBlocked;
 
@@ -42,9 +39,9 @@ const loginUser = async (payload: TLoginUser) => {
   }
 
   const jwtPayload = {
-    // userId: user._id.toString(),
-    useremail: user?.email,
-    role: user?.role,
+    userId: user?._id?.toString() ?? "default_id",
+    useremail: user?.email ?? "default_email",      
+    role: user?.role ?? "user",                     
   };
 
   const accessToken = createToken(
