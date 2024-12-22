@@ -1,5 +1,6 @@
 import QueryBuilder from "../../builders/Querybuilders";
 import AppError from "../../errors/Apperror";
+import { User } from "../user/user-model";
 import { TBlogPost } from "./blog-interface";
 import { BlogPostModel } from "./blog-model";
 import { BlogSearchField } from "./blog.constant";
@@ -14,15 +15,20 @@ const createBlog = async (payload: TBlogPost) => {
 const UpdateBlog = async (
   id: string,
   payload: Partial<TBlogPost>,
-  currentUserId: string
+  currentUserEmail: string
 ) => {
   const ExistingId = await BlogPostModel.findById(id);
+
   if (!ExistingId) {
     throw new AppError(404, "Id is invalid");
   }
   const CreateId = ExistingId.author.toString();
 
-  if (CreateId === currentUserId) {
+  const IDs = await User.findById(CreateId);
+
+  const CurrentEmail = IDs?.email;
+
+  if (CurrentEmail === currentUserEmail) {
     const result = await BlogPostModel.findByIdAndUpdate(id, payload, {
       new: true,
       runValidators: true,
@@ -33,7 +39,7 @@ const UpdateBlog = async (
   }
 };
 
-const DeleteBlog = async (id: string, currentUserId: string) => {
+const DeleteBlog = async (id: string, currentUserEmail: string) => {
   const existingBlog = await BlogPostModel.findById(id);
   if (!existingBlog) {
     throw new AppError(404, "Blog not found");
@@ -41,7 +47,7 @@ const DeleteBlog = async (id: string, currentUserId: string) => {
 
   const authorId = existingBlog.author.toString();
 
-  if (authorId === currentUserId) {
+  if (authorId === currentUserEmail) {
     const result = await BlogPostModel.findByIdAndDelete(id);
     return result;
   } else {
@@ -57,7 +63,7 @@ const getAllBlog = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await courseQuery.modelQuery.populate('author');
+  const result = await courseQuery.modelQuery.populate("author");
   return result;
 };
 

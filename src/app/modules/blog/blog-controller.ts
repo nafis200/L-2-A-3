@@ -19,8 +19,8 @@ const createBlogPost = catchAsync(async (req, res) => {
 });
 
 const upateBlogPost = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await BlogServices.UpdateBlog(id, req.body, req.user.userId);
+  const { id } = req.params; 
+  const result = await BlogServices.UpdateBlog(id, req.body, req.user.useremail);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -31,7 +31,7 @@ const upateBlogPost = catchAsync(async (req, res) => {
 
 const deleteBlogPost = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await BlogServices.DeleteBlog(id, req.user.userId);
+  const result = await BlogServices.DeleteBlog(id, req.user.req.user.useremail);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
