@@ -15,8 +15,7 @@ router.patch('/:id', ValidateRequest(BlogValidation.BlogUpdateValidation),auth(U
 
 router.delete('/:id',auth(USER_ROLE.user),BlogController.deleteBlogPost)
 
-
-
+router.get('/',BlogController.getAllBlogPost)
 
 
 export const BlogRoutes = router;

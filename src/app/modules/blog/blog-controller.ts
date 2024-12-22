@@ -40,8 +40,19 @@ const deleteBlogPost = catchAsync(async (req, res) => {
   });
 });
 
+const getAllBlogPost = catchAsync(async (req, res) => {
+  const result = await BlogServices.getAllBlog(req.query);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student data Get successfully',
+    data: result,
+  });
+});
+
 export const BlogController = {
   createBlogPost,
   upateBlogPost,
-  deleteBlogPost
+  deleteBlogPost,
+  getAllBlogPost
 };

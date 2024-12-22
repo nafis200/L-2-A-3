@@ -1,6 +1,8 @@
+import Querybuilders from "../../builders/Querybuilders";
 import AppError from "../../errors/Apperror";
 import { TBlogPost } from "./blog-interface";
 import { BlogPostModel } from "./blog-model";
+import { BlogSearchField } from "./blog.constant";
 const createBlog = async (payload: TBlogPost) => {
   if (!payload) {
     throw new Error("Blog data is null or undefined");
@@ -47,9 +49,23 @@ const DeleteBlog = async (id: string, currentUserId: string) => {
   }
 };
 
+const getAllBlog = async (query: Record<string, unknown>) => {
+  const blogQuery = new Querybuilders(BlogPostModel.find(), query)
+    .search(BlogSearchField) 
+    .filter()                
+    .sort()                  
+    .paginate()              
+    .fields();               
+
+  const result = await blogQuery.modelQuery.populate('author'); 
+
+  return result;
+};
+
 
 export const BlogServices = {
   createBlog,
   UpdateBlog,
-  DeleteBlog
+  DeleteBlog,
+  getAllBlog,
 };
