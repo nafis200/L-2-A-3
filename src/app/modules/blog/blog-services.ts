@@ -31,7 +31,25 @@ const UpdateBlog = async (
   }
 };
 
+const DeleteBlog = async (id: string, currentUserId: string) => {
+  const existingBlog = await BlogPostModel.findById(id);
+  if (!existingBlog) {
+    throw new AppError(404, "Blog not found");
+  }
+
+  const authorId = existingBlog.author.toString();
+
+  if (authorId === currentUserId) {
+    const result = await BlogPostModel.findByIdAndDelete(id);
+    return result;
+  } else {
+    throw new AppError(403, "You can't delete another user's blog");
+  }
+};
+
+
 export const BlogServices = {
   createBlog,
   UpdateBlog,
+  DeleteBlog
 };

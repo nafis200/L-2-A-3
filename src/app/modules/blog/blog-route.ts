@@ -13,6 +13,8 @@ router.post('/',ValidateRequest(BlogValidation.BlogValidationSchema),auth(USER_R
 
 router.patch('/:id', ValidateRequest(BlogValidation.BlogUpdateValidation),auth(USER_ROLE.user),BlogController.upateBlogPost)
 
+router.delete('/:id',auth(USER_ROLE.user),BlogController.deleteBlogPost)
+
 
 
 
