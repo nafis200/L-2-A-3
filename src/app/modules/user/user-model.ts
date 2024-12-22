@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import config from "../../config";
 const userSchema = new Schema<TUser,UserModel>(
   {
-    _id:{type:String,required: false},
+  //   _id:{type:String,required: false},
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },

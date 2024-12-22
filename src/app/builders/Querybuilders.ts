@@ -1,6 +1,6 @@
 import { FilterQuery, Query } from 'mongoose';
 
-class Querybuilders<T> {
+class QueryBuilder<T> {
   public modelQuery: Query<T[], T>;
   public query: Record<string, unknown>;
 
@@ -8,51 +8,59 @@ class Querybuilders<T> {
     this.modelQuery = modelQuery;
     this.query = query;
   }
-  search(searchableFields: string[]) {
-    const searchTerm = this.query?.searchTerm as string;
-    if (searchTerm) {
-      const searchConditions = searchableFields.map((field) => ({
-        [field]: { $regex: searchTerm, $options: 'i' },
-      })) as FilterQuery<T>[];
 
-      this.modelQuery = this.modelQuery.find({ $or: searchConditions });
+  search(searchableFields: string[]) {
+    const searchTerm = this?.query?.search;
+    if (searchTerm) {
+      this.modelQuery = this.modelQuery.find({
+        $or: searchableFields.map(
+          (field) =>
+            ({
+              [field]: { $regex: searchTerm, $options: 'i' },
+            }) as FilterQuery<T>,
+        ),
+      });
     }
+
     return this;
   }
+
   filter() {
     const queryObj = { ...this.query };
-    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields','search','sortBy','sortOrder','filter'];
 
-    excludeFields.forEach((field) => delete queryObj[field]);
-    Object.keys(queryObj).forEach((key) => {
-      if (queryObj[key] === undefined || queryObj[key] === null) {
-        delete queryObj[key];
-      }
-    });
+    excludeFields.forEach((el) => delete queryObj[el]);
 
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+
     return this;
   }
 
   sort() {
-    const sort = (this.query?.sort as string) || '-createdAt';
-    this.modelQuery = this.modelQuery.sort(sort);
+    const sort =
+      (this?.query?.sortBy as string)?.split(',')?.join(' ') || '-createdAt';
+    this.modelQuery = this.modelQuery.sort(sort as string);
+
     return this;
   }
 
   paginate() {
-    const page = Math.max(Number(this.query?.page) || 1, 1);
-    const limit = Math.min(Number(this.query?.limit) || 10, 100);
+    const page = Number(this?.query?.page) || 1;
+    const limit = Number(this?.query?.limit) || 10;
     const skip = (page - 1) * limit;
 
     this.modelQuery = this.modelQuery.skip(skip).limit(limit);
+
     return this;
   }
+
   fields() {
-    const fields = (this.query?.fields as string)?.split(',')?.join(' ') || '-__v';
+    const fields =
+      (this?.query?.fields as string)?.split(',')?.join(' ') || '-__v';
+
     this.modelQuery = this.modelQuery.select(fields);
     return this;
   }
 }
 
-export default Querybuilders;
+export default QueryBuilder;
