@@ -58,7 +58,7 @@ class QueryBuilder<T> {
     ];
     excludeFields.forEach((el) => delete queryObj[el]);
 
-    if (queryObj.filter && typeof queryObj.filter === 'string') {
+    if (queryObj.filter && typeof queryObj.filter === "string") {
       try {
         queryObj.filter = new mongoose.Types.ObjectId(queryObj.filter);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
