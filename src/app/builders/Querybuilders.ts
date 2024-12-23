@@ -1,4 +1,5 @@
 import { FilterQuery, Query } from "mongoose";
+import mongoose from "mongoose";
 
 class QueryBuilder<T> {
   public modelQuery: Query<T[], T>;
@@ -25,6 +26,24 @@ class QueryBuilder<T> {
     return this;
   }
 
+  // filter() {
+  //   const queryObj = { ...this.query };
+  //   const excludeFields = [
+  //     "searchTerm",
+  //     "sort",
+  //     "limit",
+  //     "page",
+  //     "fields",
+  //     "search",
+  //     "sortBy",
+  //     "sortOrder",
+  //   ];
+  //   excludeFields.forEach((el) => delete queryObj[el]);
+
+  //   this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+  //   return this;
+  // }
+
   filter() {
     const queryObj = { ...this.query };
     const excludeFields = [
@@ -38,22 +57,27 @@ class QueryBuilder<T> {
       "sortOrder",
     ];
     excludeFields.forEach((el) => delete queryObj[el]);
-    
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
-  
-    
+
+    if (queryObj.filter && typeof queryObj.filter === 'string') {
+      try {
+        queryObj.filter = new mongoose.Types.ObjectId(queryObj.filter);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        throw new Error("Invalid ID format");
+      }
+    }
+
+    this.modelQuery = this.modelQuery.find(queryObj.filter as FilterQuery<T>);
     return this;
   }
 
   sort() {
-    const sortBy = this?.query?.sortBy || "createdAt"; 
-    const sortOrder = this?.query?.sortOrder === "desc" ? "-" : ""; 
-    const sort = `${sortOrder}${sortBy}`; 
+    const sortBy = this?.query?.sortBy || "createdAt";
+    const sortOrder = this?.query?.sortOrder === "desc" ? "-" : "";
+    const sort = `${sortOrder}${sortBy}`;
     this.modelQuery = this.modelQuery.sort(sort);
-
     return this;
-}
-
+  }
 
   paginate() {
     const page = Number(this?.query?.page) || 1;
