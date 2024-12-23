@@ -5,8 +5,6 @@ import httpStatus from "http-status";
 
 const upateUserBlock = catchAsync(async (req, res) => {
     const { userId } = req.params; 
-    console.log(userId);
-    
     const result = await AdminServices.UpdateBlog(userId);
     sendResponse(res, {
       statusCode: httpStatus.OK,
@@ -16,6 +14,18 @@ const upateUserBlock = catchAsync(async (req, res) => {
     });
   });
 
+  const deleteBlock = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await AdminServices.DeleteBlog(id);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Blog Deleted Successfully!",
+      data: result,
+    });
+  });
+
   export const BlogAdminController = {
-    upateUserBlock
+    upateUserBlock,
+    deleteBlock
   };
