@@ -44,7 +44,7 @@ const loginUser = async (payload: TLoginUser) => {
     role: user?.role ?? "user",                     
   };
 
-  const accessToken = createToken(
+  const token = createToken(
     jwtPayload,
     config.jwt_access_secret as string,
     config.jwt_access_expires_in as string
@@ -57,7 +57,7 @@ const loginUser = async (payload: TLoginUser) => {
   );
 
   return {
-    accessToken,
+    token,
     refreshToken,
   };
 };
